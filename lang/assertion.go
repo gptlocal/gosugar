@@ -6,3 +6,8 @@ func Must(err error) {
 		panic(err)
 	}
 }
+
+func Must2(v interface{}, err error) interface{} {
+	Must(err)
+	return v
+}
