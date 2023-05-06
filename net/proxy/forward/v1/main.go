@@ -1,41 +1,47 @@
 package main
 
 import (
-	"fmt"
 	"io"
+	"log"
 	"net"
 	"net/http"
+	"time"
 )
 
-func handleRequest(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodConnect {
-		handleTunneling(w, r)
-	} else {
-		handleHTTP(w, r)
+func main() {
+	server := &http.Server{
+		Addr: ":8080",
+		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method == http.MethodConnect {
+				handleTunneling(w, r)
+			} else {
+				handleRequest(w, r)
+			}
+		}),
 	}
+
+	log.Fatal(server.ListenAndServe())
 }
 
-func handleHTTP(w http.ResponseWriter, r *http.Request) {
+func handleRequest(w http.ResponseWriter, r *http.Request) {
 	resp, err := http.DefaultTransport.RoundTrip(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusServiceUnavailable)
 		return
 	}
 	defer resp.Body.Close()
-
 	copyHeader(w.Header(), resp.Header)
 	w.WriteHeader(resp.StatusCode)
 	io.Copy(w, resp.Body)
 }
 
 func handleTunneling(w http.ResponseWriter, r *http.Request) {
-	destConn, err := net.Dial("tcp", r.Host)
+	destConn, err := net.DialTimeout("tcp", r.Host, 10*time.Second)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusServiceUnavailable)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-
 	hijacker, ok := w.(http.Hijacker)
 	if !ok {
 		http.Error(w, "Hijacking not supported", http.StatusInternalServerError)
@@ -46,7 +52,6 @@ func handleTunneling(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusServiceUnavailable)
 		return
 	}
-
 	go transfer(destConn, clientConn)
 	go transfer(clientConn, destConn)
 }
@@ -62,13 +67,5 @@ func copyHeader(dst, src http.Header) {
 		for _, v := range vv {
 			dst.Add(k, v)
 		}
-	}
-}
-
-func main() {
-	http.HandleFunc("/", handleRequest)
-	err := http.ListenAndServe(":8080", nil)
-	if err != nil {
-		fmt.Println("ListenAndServe error:", err)
 	}
 }

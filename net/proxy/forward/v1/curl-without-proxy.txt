@@ -1,0 +1,51 @@
+*   Trying 172.217.194.99:443...
+* Connected to www.google.com (172.217.194.99) port 443 (#0)
+* ALPN: offers h2
+* ALPN: offers http/1.1
+*  CAfile: /etc/ssl/cert.pem
+*  CApath: none
+* [CONN-0-0][CF-SSL] (304) (OUT), TLS handshake, Client hello (1):
+* [CONN-0-0][CF-SSL] (304) (IN), TLS handshake, Server hello (2):
+* [CONN-0-0][CF-SSL] (304) (IN), TLS handshake, Unknown (8):
+* [CONN-0-0][CF-SSL] (304) (IN), TLS handshake, Certificate (11):
+* [CONN-0-0][CF-SSL] (304) (IN), TLS handshake, CERT verify (15):
+* [CONN-0-0][CF-SSL] (304) (IN), TLS handshake, Finished (20):
+* [CONN-0-0][CF-SSL] (304) (OUT), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256
+* ALPN: server accepted h2
+* Server certificate:
+*  subject: CN=www.google.com
+*  start date: Apr 17 08:26:19 2023 GMT
+*  expire date: Jul 10 08:26:18 2023 GMT
+*  subjectAltName: host "www.google.com" matched cert's "www.google.com"
+*  issuer: C=US; O=Google Trust Services LLC; CN=GTS CA 1C3
+*  SSL certificate verify ok.
+* Using HTTP2, server supports multiplexing
+* Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len=0
+* h2h3 [:method: GET]
+* h2h3 [:path: /]
+* h2h3 [:scheme: https]
+* h2h3 [:authority: www.google.com]
+* h2h3 [user-agent: curl/7.87.0]
+* h2h3 [accept: */*]
+* Using Stream ID: 1 (easy handle 0x13000a800)
+> GET / HTTP/2
+> Host: www.google.com
+> user-agent: curl/7.87.0
+> accept: */*
+>
+< HTTP/2 302
+< location: https://www.google.com.hk/url?sa=p&hl=zh-CN&pref=hkredirect&pval=yes&q=https://www.google.com.hk/&ust=1683402693207201&usg=AOvVaw3L5NveC7XVK6VjE6wxSC_H
+< cache-control: private
+< content-type: text/html; charset=UTF-8
+< content-security-policy-report-only: object-src 'none';base-uri 'self';script-src 'nonce-Ne49_l_Wbc2OYyaGGeDB9g' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:;report-uri https://csp.withgoogle.com/csp/gws/other-hp
+< p3p: CP="This is not a P3P policy! See g.co/p3phelp for more info."
+< date: Sat, 06 May 2023 19:51:03 GMT
+< server: gws
+< content-length: 372
+< x-xss-protection: 0
+< x-frame-options: SAMEORIGIN
+< set-cookie: 1P_JAR=2023-05-06-19; expires=Mon, 05-Jun-2023 19:51:03 GMT; path=/; domain=.google.com; Secure
+< set-cookie: AEC=AUEFqZdEHOSHwUGf0PVhCofDObEjq6uoSXlRHyz1r6lpucboCt32bANjvJg; expires=Thu, 02-Nov-2023 19:51:03 GMT; path=/; domain=.google.com; Secure; HttpOnly; SameSite=lax
+< set-cookie: NID=511=Mq-QHGPEMFPVedSiHY3E6Qpl3gcp4eO0b5K-nKBgek84tUWdwZjgvnP4ieUK1tt0mzIGRluXjeJz2YVi_KEKATGGqQ-bJPycoAU8y4PzSvEErCgBZ9xJRo7L-PLkK8gBsDMR5Vel_1T2JBE42nEJtXR16ez-MGJ28BardZAx9R0; expires=Sun, 05-Nov-2023 19:51:03 GMT; path=/; domain=.google.com; HttpOnly
+< alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
