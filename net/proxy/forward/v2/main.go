@@ -6,18 +6,8 @@ import (
 )
 
 func handleRequest(w http.ResponseWriter, r *http.Request) {
-	client := &http.Client{}
-
-	// 创建一个新的请求，将原始请求的方法、URL 和头信息复制过来
-	req, err := http.NewRequest(r.Method, r.URL.String(), nil)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	req.Header = r.Header
-
 	// 向目标服务器发送请求
-	resp, err := client.Do(req)
+	resp, err := http.DefaultTransport.RoundTrip(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadGateway)
 		return
@@ -30,17 +20,20 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 			w.Header().Add(k, v)
 		}
 	}
+	w.WriteHeader(resp.StatusCode)
+
+	// 以下代码等价于 io.Copy(w, resp.Body), 使用io.Pipe() 使得代码反而会变得更复杂
 
 	// 使用 io.Pipe 创建一个管道
-	pr, pw := io.Pipe()
+	src, sink := io.Pipe()
 	go func() {
 		// 将目标服务器的响应写入管道
-		defer pw.Close()
-		io.Copy(pw, resp.Body)
+		defer sink.Close()
+		io.Copy(sink, resp.Body)
 	}()
 
 	// 从管道中读取数据并写回客户端
-	io.Copy(w, pr)
+	io.Copy(w, src)
 }
 
 func main() {

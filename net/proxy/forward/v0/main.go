@@ -4,35 +4,24 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 )
 
 func handleRequest(w http.ResponseWriter, r *http.Request) {
-	targetURL, err := url.Parse(r.RequestURI)
+	resp, err := http.DefaultTransport.RoundTrip(r)
 	if err != nil {
-		http.Error(w, "Invalid target URL", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusServiceUnavailable)
 		return
 	}
+	defer resp.Body.Close()
 
-	targetRequest := r.Clone(r.Context())
-	targetRequest.RequestURI = ""
-	targetRequest.URL = targetURL
-
-	targetResponse, err := http.DefaultTransport.RoundTrip(targetRequest)
-	if err != nil {
-		http.Error(w, "Error forwarding request", http.StatusInternalServerError)
-		return
-	}
-	defer targetResponse.Body.Close()
-
-	for k, vv := range targetResponse.Header {
+	for k, vv := range resp.Header {
 		for _, v := range vv {
 			w.Header().Add(k, v)
 		}
 	}
 
-	w.WriteHeader(targetResponse.StatusCode)
-	io.Copy(w, targetResponse.Body)
+	w.WriteHeader(resp.StatusCode)
+	io.Copy(w, resp.Body)
 }
 
 func main() {
