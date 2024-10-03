@@ -1,3 +1,4 @@
+// MIGRATED: retry/retry.go on 2024-10-01
 package retry
 
 //go:generate go run github.com/gptlocal/gosugar/codegen/errors -errmod=github.com/gptlocal/gosugar/errors

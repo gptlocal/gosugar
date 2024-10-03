@@ -1,3 +1,5 @@
+// MIGRATED: bytespool/pool.go on 2024-10-01
+
 package bytespool
 
 import "sync"

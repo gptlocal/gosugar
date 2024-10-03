@@ -1,3 +1,5 @@
+// MIGRATED: serial/string.go on 2024-10-02
+
 package text
 
 import (
